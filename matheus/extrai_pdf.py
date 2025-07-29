@@ -6,7 +6,7 @@ Utilizar uma biblioteca para extrair o texto do PDF: Bibliotecas como PyPDF2, pd
 2.
 Processar o texto extraído: Após obter o texto, você precisará analisar as linhas para identificar as seções correspondentes a cada macrorregião e região de saúde, bem como os nomes dos municípios e suas populações. Isso envolverá lógica de programação para reconhecer os padrões nos cabeçalhos e nas linhas de dados.
 3.
-Estruturar os dados: À medida que as informações são extraídas, elas devem ser armazenadas em uma estrutura de dados adequada em Python, como uma lista de dicionários, onde cada dicionário representa um município e contém as chaves 'municípios', 'população', 'macrorregião' e 'região de saúde'.
+Estruturar os dados: À medida que as informações são extraídas, elas devem ser armazenadas em uma estrutura de dados adequada em Python, como uma lista de dicionários, onde cada dicionário representa um município e contém as chaves "municípios", "população", "macrorregião" e "região de saúde".
 4.
 Escrever os dados em um arquivo CSV: Finalmente, a estrutura de dados criada pode ser escrita em um arquivo CSV utilizando o módulo csv do Python ou a biblioteca pandas.
 Exemplo de estrutura geral do código (conceitual):
@@ -24,7 +24,7 @@ def extrair_dados_pdf(caminho_pdf):
 
     # Usando tabula para tentar ler tabelas do PDF (pode precisar de ajustes dependendo do PDF)
     try:
-        tables = tabula.read_pdf(caminho_pdf, pages='all', multiple_tables=True)
+        tables = tabula.read_pdf(caminho_pdf, pages="all", multiple_tables=True)
         for table in tables:
             for index, row in table.iterrows():
                 # Adapte a lógica abaixo com base na estrutura real das tabelas extraídas
@@ -35,18 +35,18 @@ def extrair_dados_pdf(caminho_pdf):
                     populacao = row[2] # Assumindo que a população total está na terceira coluna
 
                     dados.append({
-                        'municípios': nome_municipio,
-                        'população': populacao,
-                        'macrorregião': macrorregiao_atual,
-                        'região de saúde': regiao_saude_atual
+                        "municípios": nome_municipio,
+                        "população": populacao,
+                        "macrorregião": macrorregiao_atual,
+                        "região de saúde": regiao_saude_atual
                     })
                 except:
                     # Pode ser uma linha de cabeçalho ou outra informação
-                    if 'MACRORREGIÃO DE SAÚDE' in ' '.join(row.astype(str).tolist()):
-                        macrorregiao_atual = ' '.join(row.astype(str).tolist()).split(': ')[-1]
+                    if "MACRORREGIÃO DE SAÚDE" in " ".join(row.astype(str).tolist()):
+                        macrorregiao_atual = " ".join(row.astype(str).tolist()).split(": ")[-1]
                         regiao_saude_atual = None # Reseta a região de saúde ao encontrar uma nova macrorregião
-                    elif 'REGIÃO DE SAÚDE' in ' '.join(row.astype(str).tolist()):
-                        regiao_saude_atual = ' '.join(row.astype(str).tolist()).split(' - ').replace('REGIÃO DE SAÚDE DO ', '')
+                    elif "REGIÃO DE SAÚDE" in " ".join(row.astype(str).tolist()):
+                        regiao_saude_atual = " ".join(row.astype(str).tolist()).split(" - ").replace("REGIÃO DE SAÚDE DO ", "")
 
     except Exception as e:
         print(f"Erro ao ler PDF com tabula: {e}")
@@ -57,22 +57,22 @@ def extrair_dados_pdf(caminho_pdf):
     # Se tabula não extraiu como esperado, uma alternativa seria ler o PDF como texto
     if not dados:
         import PyPDF2
-        with open(caminho_pdf, 'rb') as pdf_file:
+        with open(caminho_pdf, "rb") as pdf_file:
             pdf_reader = PyPDF2.PdfReader(pdf_file)
             texto_completo = ""
             for page_num in range(len(pdf_reader.pages)):
                 page = pdf_reader.pages[page_num]
                 texto_completo += page.extract_text()
 
-        linhas = texto_completo.split('\n')
+        linhas = texto_completo.split("\n")
         macrorregiao_atual = None
         regiao_saude_atual = None
         for linha in linhas:
-            if 'MACRORREGIÃO DE SAÚDE' in linha:
-                macrorregiao_atual = linha.split(': ')[-1]
+            if "MACRORREGIÃO DE SAÚDE" in linha:
+                macrorregiao_atual = linha.split(": ")[-1]
                 regiao_saude_atual = None
-            elif 'REGIÃO DE SAÚDE' in linha:
-                regiao_saude_atual = linha.split(' - ').replace('REGIÃO DE SAÚDE DO ', '')
+            elif "REGIÃO DE SAÚDE" in linha:
+                regiao_saude_atual = linha.split(" - ").replace("REGIÃO DE SAÚDE DO ", "")
             elif linha.strip() and linha.isdigit(): # Tentativa de identificar linhas de municípios
                 partes = linha.split()
                 try:
@@ -80,17 +80,17 @@ def extrair_dados_pdf(caminho_pdf):
                     nome_municipio_partes = []
                     populacao = None
                     for i in range(1, len(partes)):
-                        if partes[i].replace('.', '').isdigit():
+                        if partes[i].replace(".", "").isdigit():
                             populacao = partes[i]
                             break
                         nome_municipio_partes.append(partes[i])
-                    nome_municipio = ' '.join(nome_municipio_partes)
+                    nome_municipio = " ".join(nome_municipio_partes)
                     if nome_municipio and populacao:
                         dados.append({
-                            'municípios': nome_municipio.strip(),
-                            'população': populacao.replace('.', ''),
-                            'macrorregião': macrorregiao_atual,
-                            'região de saúde': regiao_saude_atual
+                            "municípios": nome_municipio.strip(),
+                            "população": populacao.replace(".", ""),
+                            "macrorregião": macrorregiao_atual,
+                            "região de saúde": regiao_saude_atual
                         })
                 except:
                     pass # Ignorar linhas que não соответствуют ao padrão esperado
@@ -102,12 +102,12 @@ def salvar_para_csv(dados, nome_arquivo_csv):
     Salva uma lista de dicionários em um arquivo CSV.
     """
     df = pd.DataFrame(dados)
-    df.to_csv(nome_arquivo_csv, index=False, encoding='utf-8')
+    df.to_csv(nome_arquivo_csv, index=False, encoding="utf-8")
     print(f"Dados salvos com sucesso em {nome_arquivo_csv}")
 
 if __name__ == "__main__":
-    caminho_do_pdf = 'RegionalDeSaude2.pdf'
-    nome_do_arquivo_csv = 'dados_saude.csv'
+    caminho_do_pdf = "matheus/regional_saude.pdf"
+    nome_do_arquivo_csv = "matheus/dados_saude.csv"
     dados_extraidos = extrair_dados_pdf(caminho_do_pdf)
     salvar_para_csv(dados_extraidos, nome_do_arquivo_csv)
 """
