@@ -32,68 +32,51 @@ abr25 = "IFLORI114-2025-04-01-2025-04-30.csv"
 mai25 = "IFLORI114-2025-05-01-2025-05-31.csv"
 jun25 = "IFLORI114-2025-06-01-2025-06-30.csv"
 
+##### DEFININDO FUNÇÕES ##########################################################
+def abrir_arquivo(entrada):
+	saida = pd.read_csv(f"{caminho_dados}{entrada}", sep = ";")
+	saida["data"] = pd.to_datetime(saida["Data"] + " " + saida["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
+	saida.set_index("data", inplace = True)
+	saida.drop(columns = ["Data", "Hora (Local)"], inplace = True)
+	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{saida}\n")
+	return saida
+
+def renomear_colunas(entrada):
+	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{entrada.columns}\n")
+	colunas_renomear = {"Temp. Med. (C)":"tmed", "Temp. Max. (C)":"tmax", "Temp. Min. (C)":"tmin",
+			"Umi. Med. (%)":"urmed", "Umi. Max. (%)":"urmax", "Umi. Min. (%)":"urmin",
+			"Pto Orvalho Med. (C)":"tomed", "Pto Orvalho Max. (C)":"tomax", "Pto Orvalho Min. (C)":"tomin",
+			"Pressao Tend. (hPa)":"pmed", "Pressao Max. (hPa)":"pmax", "Pressao Min. (hPa)":"pmin",
+			"Vel. Vento (m/s)":"ventovel", "Dir. Vento (graus)":"ventodir",
+			"Raj. Vento (m/s)":"rajada", "Radiacao (KJ/m²)":"rad","Chuva (mm)":"prec"}
+	saida = entrada.rename(columns = colunas_renomear)
+	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{saida}\n")
+	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{saida.columns}\n")
+	return saida
+
+
+
 ##### ABRINDO ARQUIVOS ###########################################################
-jan25 = pd.read_csv(f"{caminho_dados}{jan25}", sep = ";")#, skiprows = 10, sep = ";", decimal = ",")
-fev25 = pd.read_csv(f"{caminho_dados}{fev25}", sep = ";")
-mar25 = pd.read_csv(f"{caminho_dados}{mar25}", sep = ";")
-abr25 = pd.read_csv(f"{caminho_dados}{abr25}", sep = ";")
-mai25 = pd.read_csv(f"{caminho_dados}{mai25}", sep = ";")
-jun25 = pd.read_csv(f"{caminho_dados}{jun25}", sep = ";")
+jan25 = abrir_arquivo(jan25)
+fev25 = abrir_arquivo(fev25)
+mar25 = abrir_arquivo(mar25)
+abr25 = abrir_arquivo(abr25)
+mai25 = abrir_arquivo(mai25)
+jun25 = abrir_arquivo(jun25)
 
 ### PRÉ-PROCESSAMENTO ############################################################
-jan25["data"] = pd.to_datetime(jan25["Data"] + " " + jan25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-jan25.set_index("data", inplace = True)
-jan25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{jan25}\n")
+jan25 = renomear_colunas(jan25)
+fev25 = renomear_colunas(fev25)
+mar25 = renomear_colunas(mar25)
+abr25 = renomear_colunas(abr25)
+mai25 = renomear_colunas(mai25)
+jun25 = renomear_colunas(jun25)
 
-fev25["data"] = pd.to_datetime(fev25["Data"] + " " + fev25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-fev25.set_index("data", inplace = True)
-fev25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{fev25}\n")
-
-mar25["data"] = pd.to_datetime(mar25["Data"] + " " + mar25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-mar25.set_index("data", inplace = True)
-mar25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{mar25}\n")
-
-abr25["data"] = pd.to_datetime(abr25["Data"] + " " + abr25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-abr25.set_index("data", inplace = True)
-abr25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{abr25}\n")
-
-mai25["data"] = pd.to_datetime(mai25["Data"] + " " + mai25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-mai25.set_index("data", inplace = True)
-mai25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{mai25}\n")
-
-jun25["data"] = pd.to_datetime(jun25["Data"] + " " + jun25["Hora (Local)"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"), format="%d/%m/%Y %H:%M")
-jun25.set_index("data", inplace = True)
-jun25.drop(columns = ["Data", "Hora (Local)"], inplace = True)
-print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{jun25}\n")
-
+sys.exit()
 sys.exit()
 
 
-colunas_renomear = {"Data Medicao":"dia", "Hora Medicao":"hora",
-		"PRECIPITACAO TOTAL, HORARIO(mm)":"prec", "RADIACAO GLOBAL(Kj/m²)":"rad",
-		"PRESSAO ATMOSFERICA AO NIVEL DA ESTACAO, HORARIA(mB)":"p_estacao",
-		"PRESSAO ATMOSFERICA REDUZIDA NIVEL DO MAR, AUT(mB)":"p_mar",
-		"PRESSAO ATMOSFERICA MAX.NA HORA ANT. (AUT)(mB)":"pmax",
-		"PRESSAO ATMOSFERICA MIN. NA HORA ANT. (AUT)(mB)":"pmin",
-		"TEMPERATURA DO AR - BULBO SECO, HORARIA(°C)":"t_seco",
-		"TEMPERATURA DO PONTO DE ORVALHO(°C)":"t_orvalho",
-		"TEMPERATURA MAXIMA NA HORA ANT. (AUT)(°C)":"tmax",
-		"TEMPERATURA MINIMA NA HORA ANT. (AUT)(°C)":"tmin",
-		"TEMPERATURA ORVALHO MAX. NA HORA ANT. (AUT)(°C)":"tomax",
-		"TEMPERATURA ORVALHO MIN. NA HORA ANT. (AUT)(°C)":"tomin",
-		"UMIDADE REL. MAX. NA HORA ANT. (AUT)(%)":"urmax",
-		"UMIDADE REL. MIN. NA HORA ANT. (AUT)(%)":"urmin",
-		"UMIDADE RELATIVA DO AR, HORARIA(%)":"urar",
-		"VENTO, DIRECAO HORARIA (gr)(° (gr))":"ventodir", "VENTO, VELOCIDADE HORARIA(m/s)":"ventovel",
-		"VENTO, RAJADA MAXIMA(m/s)":"rajada", "Unnamed: 20":"EXCLUIR"}
-inmet = inmet.rename(columns = colunas_renomear)
-print(f"\n{green}INMET BD-MEP:\n{reset}{inmet.columns}\n")
-inmet.drop(columns = ["EXCLUIR"], inplace = True)
+### Tratar NaN
 inmet.dropna(inplace = True) # REVER ESSE PASSO  (48192 X 20) >> (45202 X 20)
 inmet["data"] = pd.to_datetime(inmet["dia"] + " " + inmet["hora"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"))
 inmet.set_index("data", inplace=True)
