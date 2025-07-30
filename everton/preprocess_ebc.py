@@ -44,7 +44,7 @@ def abrir_arquivo(entrada):
 def renomear_colunas(entrada):
 	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{entrada.columns}\n")
 	colunas_renomear = {"Temp. Med. (C)":"tmed", "Temp. Max. (C)":"tmax", "Temp. Min. (C)":"tmin",
-			"Umi. Med. (%)":"urmed", "Umi. Max. (%)":"urmax", "Umi. Min. (%)":"urmin",
+			"Umi. Med. (%)":"urar", "Umi. Max. (%)":"urmax", "Umi. Min. (%)":"urmin",
 			"Pto Orvalho Med. (C)":"tomed", "Pto Orvalho Max. (C)":"tomax", "Pto Orvalho Min. (C)":"tomin",
 			"Pressao Tend. (hPa)":"pmed", "Pressao Max. (hPa)":"pmax", "Pressao Min. (hPa)":"pmin",
 			"Vel. Vento (m/s)":"ventovel", "Dir. Vento (graus)":"ventodir",
@@ -54,6 +54,18 @@ def renomear_colunas(entrada):
 	print(f"\n{green}EBC IFSC FLORIPA:\n{reset}{saida.columns}\n")
 	return saida
 
+def diario_semanal(entrada):
+	print(f"\n{green}EBC IFSC FLORIPA (horário):\n{reset}{entrada}\n")
+	fator_agregacao = {"rad":"mean", "pmax":"max", "pmin":"min", "pmed":"mean",
+					"tmax":"max", "tmin":"min", "tmed":"mean",
+					"tomax":"max", "tomin":"min", "tomed":"mean",
+					"prec":"sum", "urar":"mean", "urmax":"max", "urmin":"min",
+					"ventodir":"mean", "rajada":"max", "ventovel":"mean"}
+	diario = entrada.resample("D").agg(fator_agregacao)
+	print(f"\n{green}EBC IFSC FLORIPA (diário):\n{reset}{diario}\n")
+	semanal = entrada.resample("W").agg(fator_agregacao)
+	print(f"\n{green}EBC IFSC FLORIPA (semanal):\n{reset}{semanal}\n")
+	return diario, semanal
 
 
 ##### ABRINDO ARQUIVOS ###########################################################
@@ -71,12 +83,18 @@ mar25 = renomear_colunas(mar25)
 abr25 = renomear_colunas(abr25)
 mai25 = renomear_colunas(mai25)
 jun25 = renomear_colunas(jun25)
+jan25_diario, jan25_semanal = diario_semanal(jan25)
+fev25_diario, fev25_semanal = diario_semanal(fev25)
+mar25_diario, mar25_semanal = diario_semanal(mar25)
+abr25_diario, abr25_semanal = diario_semanal(abr25)
+mai25_diario, mai25_semanal = diario_semanal(mai25)
+jun25_diario, jun25_semanal = diario_semanal(jun25)
 
 sys.exit()
 sys.exit()
 
 
-### Tratar NaN
+### Tratar NaN (NECESSÁRIO?)
 inmet.dropna(inplace = True) # REVER ESSE PASSO  (48192 X 20) >> (45202 X 20)
 inmet["data"] = pd.to_datetime(inmet["dia"] + " " + inmet["hora"].astype(str).str.zfill(4).str.slice_replace(2, 2, ":"))
 inmet.set_index("data", inplace=True)
@@ -86,13 +104,7 @@ for col in colunas:
 	inmet[col] = inmet[col].astype(str).str.replace(",", ".").astype(float)
 print(f"\n{green}INMET BD-MEP:\n{reset}{inmet.columns}\n")
 print(f"\n{green}INMET BD-MEP:\n{reset}{inmet}\n")
-fator_agregacao = {"rad":"mean", "p_estacao":"mean", "p_mar":"mean", "pmax":"max", "pmin":"min",
-				"t_seco":"mean", "tmax":"max", "tmin":"min",
-				"t_orvalho":"mean", "tomax":"max", "tomin":"min",
-				"prec":"sum", "urar":"mean", "urmax":"max", "urmin":"min",
-				"ventodir":"mean", "rajada":"max", "ventovel":"mean"}
-inmet_diario = inmet.resample("D").agg(fator_agregacao)
-inmet_semanal = inmet.resample("W").agg(fator_agregacao)
+
 print(f"\n{green}INMET BD-MEP:\n{reset}{inmet}\n")
 print(f"\n{green}INMET BD-MEP (diário):\n{reset}{inmet_diario}\n")
 print(f"\n{green}INMET BD-MEP (semanal):\n{reset}{inmet_semanal}\n")
