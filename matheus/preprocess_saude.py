@@ -32,14 +32,43 @@ focos = "focos 2025.xlsx"
 
 
 ##### ABRINDO ARQUIVOS ###########################################################
-#casos = pd.read_excel(f"{caminho_dados}{casos}")
+casos = pd.read_excel(f"{caminho_dados}{casos}")
 focos = pd.read_excel(f"{caminho_dados}{focos}")
 
 
 ### PRÉ-PROCESSAMENTO ############################################################
 ### CASOS
-#print(f"\n{green}CASOS:\n{reset}{casos}\n")
-#print(f"\n{green}CASOS:\n{reset}{casos.columns}\n")
+print(f"\n{green}CASOS:\n{reset}{casos}\n")
+print(f"\n{green}CASOS:\n{reset}{casos.columns}\n")
+colunas_renomear = {"ID_AGRAVO":"doenca",
+					"DT_NOTIFIC":"data_notificacao",
+					"DT_SIN_PRI":"data_sintoma",
+					"ID_MUNICIP":"municipio",
+					"ID_REGIONA":"regional",
+					"CLASSI_FIN":"classificacao",
+					"CRITERIO":"criterio ",
+					"SOROTIPO":"sorotipo"}
+casos = casos.rename(columns = colunas_renomear)
+casos = casos[["data_sintoma", "data_notificacao", "municipio", "regional",
+				"doenca", "classificacao", "criterio ", "sorotipo"]]
+print(f"\n{green}CASOS:\n{reset}{casos}\n")
+print(f"\n{green}CASOS:\n{reset}{casos.columns}\n")
+"""
+REVER ESSAS DATAS (ANONIMIZADAS?)
+CASOS:
+        data_sintoma  data_notificacao  municipio  regional doenca  classificacao  criterio   sorotipo
+0              45738             45743     420757    1546.0    A90            5.0        1.0       NaN
+1              45746             45746     420910    1565.0    A90            5.0        1.0       NaN
+2              45729             45731     420210    1565.0    A90            5.0        2.0       NaN
+3              45735             45736     420820    1550.0    A90           10.0        1.0       NaN
+4              45737             45740     421600    1553.0    A90            5.0        1.0       NaN
+...              ...               ...        ...       ...    ...            ...        ...       ...
+113082         45783             45784     420540    1476.0    A90            8.0        NaN       NaN
+113083         45791             45792     420540    1476.0    A90            8.0        NaN       NaN
+113084         45839             45839     420540    1476.0    A90            NaN        NaN       NaN
+113085         45764             45766     420540    1476.0    A90            8.0        NaN       NaN
+113086         45773             45777     420540    1476.0    A90            8.0        NaN       NaN
+"""
 #sys.exit()
 ### FOCOS
 print(f"\n{green}FOCOS:\n{reset}{focos}\n")
