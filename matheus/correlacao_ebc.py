@@ -30,8 +30,10 @@ reset = "\033[0m"
 ##### CAMINHOS E ARQUIVOS ########################################################
 caminho_dados = "/home/sifapsc/scripts/matheus/fapesc_dengue/everton/dados/"
 caminho_dive = "/home/sifapsc/scripts/matheus/dados_dengue/"
+caminho_matheus = "/home/sifapsc/scripts/matheus/fapesc_dengue/matheus/dados/"
 caminho_resultado = f"/home/sifapsc/scripts/matheus/fapesc_dengue/matheus/resultado/"
 focos = "focos_pivot.csv"
+focos25 = "focos_semanal_pivot.csv"
 casos = "casos_dive_pivot_total.csv"
 inmet = "dados_A806_H_2020-01-01_2025-06-30.csv" #Renomear
 # ARQ.METEO EBC
@@ -39,14 +41,17 @@ inmet = "dados_A806_H_2020-01-01_2025-06-30.csv" #Renomear
 ##### ABRINDO ARQUIVOS ###########################################################
 casos = pd.read_csv(f"{caminho_dive}{casos}")
 focos = pd.read_csv(f"{caminho_dive}{focos}")
-inmet = pd.read_csv(f"{caminho_dados}{inmet}")
+focos25 = pd.read_csv(f"{caminho_matheus}{focos25}")
+#inmet = pd.read_csv(f"{caminho_dados}{inmet}")
 
 ### PRÉ-PROCESSAMENTO ############################################################
 casos = casos[["Semana", "FLORIANÓPOLIS"]].rename(columns = {"FLORIANÓPOLIS":"casos"})
 focos = focos[["Semana", "FLORIANÓPOLIS"]].rename(columns = {"FLORIANÓPOLIS":"focos"})
+focos25 = focos25[["Semana", "FLORIANÓPOLIS"]].rename(columns = {"FLORIANÓPOLIS":"focos"})
 print(f"\n{green}CASOS:\n{reset}{casos}\n")
 print(f"\n{green}FOCOS:\n{reset}{focos}\n")
-print(f"\n{green}INMET BD-MEP:\n{reset}{inmet}\n")
+print(f"\n{green}FOCOS 2025:\n{reset}{focos25}\n")
+#print(f"\n{green}INMET BD-MEP:\n{reset}{inmet}\n")
 sys.exit()
 
 ### MONTAGEM DE DATASET ##########################################################
