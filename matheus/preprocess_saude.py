@@ -33,7 +33,7 @@ focos = "focos 2025.xlsx"
 
 ##### ABRINDO ARQUIVOS ###########################################################
 focos = pd.read_excel(f"{caminho_dados}{focos}")#, skiprows = 10, sep = ";", decimal = ",")
-"""
+
 #casos = 
 try:
 	# Use a 'with' statement to automatically handle opening and closing the file
@@ -53,7 +53,7 @@ except dbf.DbfError as e:
 	print(f"An error occurred: {e}")
 except UnicodeDecodeError:
 	print("Failed to decode using default codepage. Try a different one, like 'utf-8' or 'latin-1'.")
-"""
+
 #sys.exit()
 
 ### PRÉ-PROCESSAMENTO ############################################################
