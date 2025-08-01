@@ -26,7 +26,7 @@ white = "\033[37m"
 reset = "\033[0m"
 
 ##### CAMINHOS E ARQUIVOS ########################################################
-caminho_dados = "/home/sifapsc/scripts/matheus/fapesc_dengue/matheus/"
+caminho_dados = "/home/sifapsc/scripts/matheus/fapesc_dengue/matheus/dados/"
 casos = "dengue-2025.xlsx"
 focos = "focos 2025.xlsx"
 
