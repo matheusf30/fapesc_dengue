@@ -69,7 +69,6 @@ fator_agregacao = {"A.aegypti":"sum", "A.albopictus":"sum", "focos":"sum"}
 focos_semanal = focos.groupby("municipio").resample("W").agg(fator_agregacao)
 focos_semanal.reset_index(inplace = True)
 focos_semanal.sort_values(by = ["data"], inplace = True)
-#focos_semanal.set_index("data", inplace = True)
 print(f"\n{green}FOCOS:\n{reset}{focos_semanal}\n")
 print(f"\n{green}FOCOS:\n{reset}{focos_semanal.columns}\n")
 focos_semanal_pivot = pd.pivot_table(focos_semanal, values = "focos", fill_value = 0,
@@ -77,6 +76,8 @@ focos_semanal_pivot = pd.pivot_table(focos_semanal, values = "focos", fill_value
 colunas = focos_semanal_pivot.columns
 for c in colunas:
 	focos_semanal_pivot[c] = focos_semanal_pivot[c].astype(int)
+focos_semanal_pivot.reset_index(inplace = True)
+focos_semanal_pivot = focos_semanal_pivot.rename(columns = {"data":"Semana"})
 print(f"\n{green}FOCOS:\n{reset}{focos_semanal_pivot}\n")
 print(f"\n{green}FOCOS:\n{reset}{focos_semanal_pivot.columns}\n")
 focos_semanal_pivot.to_csv(f"{caminho_dados}focos_semanal_pivot.csv", index = False)
