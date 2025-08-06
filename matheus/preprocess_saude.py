@@ -28,13 +28,13 @@ reset = "\033[0m"
 ##### CAMINHOS E ARQUIVOS ########################################################
 caminho_dados = "/home/sifapsc/scripts/matheus/fapesc_dengue/matheus/dados/"
 casos = "dengue-2025.xlsx"
-focos = "focos 2025.xlsx"
-
+#focos = "focos 2025.xlsx"
+#casos = "casos_se32_25.xlsx"
+focos = "focos_se32_25.xlsx"
 
 ##### ABRINDO ARQUIVOS ###########################################################
-casos = pd.read_excel(f"{caminho_dados}{casos}")
-focos = pd.read_excel(f"{caminho_dados}{focos}")
-
+casos = pd.read_excel(f"{caminho_dados}{casos}", engine = "openpyxl")
+focos = pd.read_excel(f"{caminho_dados}{focos}", engine = "openpyxl")
 
 ### PRÉ-PROCESSAMENTO ############################################################
 ### CASOS
@@ -69,7 +69,37 @@ CASOS:
 113085         45764             45766     420540    1476.0    A90            8.0        NaN       NaN
 113086         45773             45777     420540    1476.0    A90            8.0        NaN       NaN
 """
-#sys.exit()
+casos["data_sintoma"] = pd.to_datetime(casos["data_sintoma"],
+										unit = "D", origin = "1899-12-30")
+casos["data_notificacao"] = pd.to_datetime(casos["data_notificacao"],
+										unit = "D", origin = "1899-12-30")
+casos["casos"] = np.ones(len(casos)).astype(int)
+print(f"\n{green}CASOS:\n{reset}{casos}\n")
+print(f"\n{green}CASOS:\n{reset}{casos.columns}\n")
+casos["data_sintoma"] = pd.to_datetime(casos["data_sintoma"], format = "%Y-%m-%d", errors = "coerce")
+casos_agrupados = casos.groupby(["data_sintoma", "municipio"]).sum(numeric_only = True)["casos"]
+casos = casos_agrupados.reset_index()
+casos.columns = ["data_sintoma", "municipio", "casos"]
+"""
+casos = casos.rename(columns = {"data_sintoma":"data"})
+casos["data"] = pd.to_datetime(casos["data"], format = "%d/%m/%Y", errors = "coerce")
+
+fator_agregacao = {"casos":"sum"}
+casos_semanal = casos.groupby("municipio").resample("W").agg(fator_agregacao)
+casos_semanal.reset_index(inplace = True)
+casos_semanal.sort_values(by = ["data"], inplace = True)
+casos_semanal_pivot = pd.pivot_table(casos_semanal, values = "casos", fill_value = 0,
+									columns = "municipio", index = "data")
+colunas = casos_semanal_pivot.columns
+for c in colunas:
+	casos_semanal_pivot[c] = casos_semanal_pivot[c].astype(int)
+casos_semanal_pivot.reset_index(inplace = True)
+casos_semanal_pivot = casos_semanal_pivot.rename(columns = {"data":"Semana"})
+"""
+print(f"\n{green}CASOS:\n{reset}{casos}\n")
+print(f"\n{green}CASOS:\n{reset}{casos.columns}\n")
+sys.exit()
+
 ### FOCOS
 print(f"\n{green}FOCOS:\n{reset}{focos}\n")
 print(f"\n{green}FOCOS:\n{reset}{focos.columns}\n")
